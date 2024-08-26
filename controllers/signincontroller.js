@@ -20,23 +20,23 @@ const HandleSignin = async (req, res)=>{
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn:'1d'}
+                {expiresIn:'10s'}
             )
             const refreshToken = jwt.sign(
                 {username:foundUser.userName},
                 process.env.REFRESH_TOKEN_SECRET,
-                {expiresIn:'3d'}
+                {expiresIn:'1d'}
             )
             foundUser.refreshToken = refreshToken
             await foundUser.save()
             res.cookie('jwt', refreshToken, {httpOnly:true, maxAge:24*60*60*1000} )
-            res.json({success:true, accessToken:accessToken})
+            res.json({success:true, accessToken:accessToken, roles: userRoles})
 
 
             
         }
         else{
-            res.json({success:false, message:" There is no active account with the provided credentials "})
+            res.status(401).json({success:false, message:" There is no active account with the provided credentials "})
         }
     }
 };

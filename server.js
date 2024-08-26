@@ -18,12 +18,21 @@ app.get('/',(req,res)=>{
 app.use('/auth', require('./routes/api/auth'));
 
 
-app.use(verifyJWT);
-app.get('/items',(req,res)=>{
-    res.json({data: ['apple','orange','banaa']});
+// app.use(verifyJWT);
+app.get('/items', verifyJWT,(req,res)=>{
+    res.json(
+        [
+            {username:'Abdelilah'},
+            {username:'Rachida'},
+            {username:'Imane'}
+        ]
+    );
 });
-app.use(verifyRoles(rolesList.ADMIN, rolesList.EDITOR));
-app.post('/items',(req,res)=>{
+// app.use(verifyRoles(rolesList.ADMIN, rolesList.EDITOR));
+app.post('/items', verifyJWT, verifyRoles(rolesList.ADMIN, rolesList.EDITOR),(req,res)=>{
     res.json(req.body);
+});
+app.use('*', (req,res)=>{
+    res.sendStatus(404)
 });
 app.listen(PORT, () => console.log(`Express running on port ${PORT}`));

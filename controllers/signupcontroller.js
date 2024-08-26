@@ -8,6 +8,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/app');
 
 const HandleSignup = async (req, res)=>{
     const {userName, email, password} = req.body
+    console.log(req.body)
     if(!userName || !email || !password) res.status(400).json({success: false, "message": "User-Name, email and password are required"});
     else if(!ValidateEmail(email)){ // Email Validation
         res.status(400).json({success:false, message:"Please enter a valid email address"})

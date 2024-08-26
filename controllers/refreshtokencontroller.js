@@ -12,7 +12,10 @@ const HandleRefreshToken = async (req, res)=>{
         res.sendStatus(403);
     else{
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err,decoded)=>{
-            if(err || foundUser.userName !== decoded.username) res.sendStatus(403);
+            if(err || foundUser.userName !== decoded.username){
+                res.sendStatus(403);
+                return
+            } 
 
             const userRoles = foundUser.roles;
             const accessToken = jwt.sign(
@@ -23,12 +26,12 @@ const HandleRefreshToken = async (req, res)=>{
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn:'1d'}
+                {expiresIn:'10s'}
             )
             
             foundUser.accessToken = accessToken;
             await foundUser.save();
-            res.json({success:true, accessToken:accessToken});
+            res.json({success:true, accessToken:accessToken, roles:userRoles});
         })
     }
 };
